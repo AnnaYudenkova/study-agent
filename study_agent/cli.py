@@ -2,7 +2,9 @@
 
 import shlex
 from datetime import date
+from pathlib import Path
 
+from study_agent.storage import DEFAULT_PATH, load_tasks, save_tasks
 from study_agent.tasks import Task, TaskBook
 
 HELP = """Команды:
@@ -13,7 +15,7 @@ HELP = """Команды:
   help — показать справку
   exit — завершить работу
 Аргументы с пробелами заключайте в прямые двойные кавычки.
-Данные хранятся только в памяти и теряются после выхода."""
+Данные сохраняются в файл при выходе."""
 
 
 def parse_date(value: str) -> date:
@@ -71,8 +73,12 @@ def execute(line: str, book: TaskBook) -> bool:
     return True
 
 
-def main() -> None:
-    book = TaskBook()
+def main(path: Path = DEFAULT_PATH) -> int:
+    try:
+        book = TaskBook(load_tasks(path))
+    except (OSError, ValueError) as error:
+        print(f"Не удалось загрузить {path}: {error}")
+        return 1
     print("Учебный помощник. Введите help для справки.")
     while True:
         try:
@@ -84,4 +90,10 @@ def main() -> None:
         except EOFError, KeyboardInterrupt:
             print()
             break
+    try:
+        save_tasks(path, book.list_tasks())
+    except OSError as error:
+        print(f"Не удалось сохранить {path}: {error}")
+        return 1
     print("До свидания!")
+    return 0
