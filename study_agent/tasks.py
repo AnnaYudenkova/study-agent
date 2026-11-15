@@ -14,8 +14,8 @@ class Task:
 
 
 class TaskBook:
-    def __init__(self) -> None:
-        self._tasks: list[Task] = []
+    def __init__(self, tasks: list[Task] | None = None) -> None:
+        self._tasks = list(tasks) if tasks is not None else []
 
     def add(self, subject: str, title: str, deadline: date) -> Task:
         subject, title = subject.strip(), title.strip()
