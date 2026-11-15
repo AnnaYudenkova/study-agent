@@ -11,3 +11,10 @@ line-length = 88
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
+
+[tool.coverage.run]
+source = ["study_agent"]
+
+[tool.coverage.report]
+precision = 2
+fail_under = 80
